@@ -101,6 +101,13 @@
 				</button>
 			</div>
 		</div>
+		
+		<div class="col-sm-12 no-padding event_edit_buttons">
+			<div class="col-xs-12 col-sm-6">
+			<input type="file" name="…" class="eventFileInput" id="edit_files">
+			</div>
+		</div>
+		
 	</div>
 	{{else}}
 		<div class="course_event">
@@ -131,6 +138,19 @@
 				</p>
 			</div>
 
+			{{#if files}} 
+			<div class="container-fluid event_detail_description">
+				<p>Related Files:</p>
+				<ul style="list-style-type:none">
+					
+					{{#each files}}
+        				{{> eventAttachments}}
+      				{{/each}}
+					
+				</ul>
+			</div>
+			{{/if}}
+
 			{{# if currentUser}}
 				<div class="eventEdit_buttons">
 					<div class="btn-group" role="group">
@@ -154,3 +174,10 @@
 	<div id="edit_event_description" style="min-height: 10ex">{{{this}}}</div>
 </template>
 
+<template name="eventAttachments">
+	<li>
+		<p>
+			<a href="{{file}}" target="_blank">{{filename}}</a>
+		</p>
+	</li>
+</template>

@@ -10,6 +10,7 @@ Router.map(function () {
 				Meteor.subscribe('courses'),
 				Meteor.subscribe('users'),
 				Meteor.subscribe('events')
+				//Meteor.subscribe('files')
 			]
 		},
 		data: function () {
@@ -52,6 +53,10 @@ Template.eventDescritpionEdit.rendered = function() {
 	new MediumEditor(this.firstNode);
 }
 
+
+
+
+
 Template.event.events({
 	'click button.eventDelete': function () {
 		if (pleaseLogin()) return;
@@ -66,6 +71,34 @@ Template.event.events({
 		Template.instance().editing.set(true);
 	},
 	
+	
+	 
+	'change .eventFileInput': function(event, template) {
+		
+		FS.Utility.eachFile(event, function(file) {
+	 
+	        Files.insert(file, function (err, fileObj) {
+		    
+		    	
+		    	if (err){
+
+	          	} else {
+					//adds a single file at a time at the moment
+	            	
+	            	var fileList = [
+	            		{
+	            			file : "/cfs/files/files/" + fileObj._id,
+	            			filename : fileObj.original.name,
+		    				filesize : fileObj.original.size,
+	            		}
+	            	];
+	          		template.files = fileList
+	          	}
+	        });
+		});
+	},
+	
+		
 	'click button.saveEditEvent': function(event, instance) {
 		if (pleaseLogin()) return;
 		function readTime(str, date) {
@@ -113,6 +146,9 @@ Template.event.events({
 			}
 		}
 
+
+
+		
 		var editevent = {
 			title: instance.$('#edit_event_title').val(),
 			description: instance.$('#edit_event_description').html(),
@@ -120,9 +156,29 @@ Template.event.events({
 			room: instance.$('#edit_event_room').val(),
 			startdate: startdate,
 			enddate: enddate
+			
 		}
 		
+		
+		var fileList = instance.files;
+		//check if file object is stored in the template object
+		if(fileList != null){
+
+			var tmp = []				
+			$.each( this.files, function( i,fileObj ){
+				tmp.push( fileObj );
+			});
+			
+			$.each( fileList, function( i, fileObj ){
+				tmp.push( fileObj );
+				//$.extend( editevent.files, filesURL );	
+			});
+			
+			editevent.files = tmp;
+		}		
+		
 		editevent.time_lastedit = now
+		
 		
 		if (this._id) {
 			Events.update(this._id, { $set: editevent });

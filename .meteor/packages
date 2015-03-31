@@ -27,3 +27,5 @@ cscottnet:es5-shim
 accounts-facebook
 archive:jquery-dotdotdot
 matb33:collection-hooks
+cfs:standard-packages
+cfs:gridfs

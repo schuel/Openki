@@ -11,6 +11,7 @@ Meteor.subscribe('messages');
 Meteor.subscribe('roles');
 Meteor.subscribe('votings');
 Meteor.subscribe('currentUser');
+Meteor.subscribe('files');
 
 // close any verification dialogs still open
 Router.onBeforeAction(function() {

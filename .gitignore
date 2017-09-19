@@ -18,3 +18,8 @@ settings.json
 server/extracts.msgfmt
 server/version.js
 node_modules/
+
+# Vagrant stuff
+*.log
+.vagrant
+

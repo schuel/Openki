@@ -50,7 +50,7 @@ Template.filter.helpers({
 
 		if (activeVisibleFilter) classes.push('active');
 
-		if (parentInstance.showingFilters.get()) classes.push('open');
+		if (parentInstance.state.get('showingFilters')) classes.push('open');
 
 		return classes.join(' ');
 	},
@@ -73,25 +73,25 @@ Template.filter.helpers({
 	},
 
 	showingFilters() {
-		return Template.instance().parentInstance().showingFilters.get();
+		return Template.instance().parentInstance().state.get('showingFilters');
 	}
 });
 
 Template.filter.events({
 	'click #toggleFilters'(e, instance) {
 		const parentInstance = instance.parentInstance();
-		const showingFilters = parentInstance.showingFilters;
+		const parentState = parentInstance.state;
 
-		if (showingFilters.get()) {
+		if (parentState.get('showingFilters')) {
 			instance.visibleFilters.forEach(filter => {
 				parentInstance.filter.disable(filter);
 			});
 
 			parentInstance.filter.done();
 			parentInstance.updateUrl();
-			showingFilters.set(false);
+			parentState.set('showingFilters', false);
 		} else {
-			showingFilters.set(true);
+			parentState.set('showingFilters', true);
 		}
 	},
 
@@ -183,18 +183,18 @@ Template.additionalFilters.helpers({
 
 	availableCategories() {
 		const findInstance = Template.instance().findInstance;
-		return Object.keys(findInstance.categorySearchResults.get());
+		return Object.keys(findInstance.state.get('categorySearchResults'));
 	},
 
 	availableSubcategories(mainCategory) {
 		const findInstance = Template.instance().findInstance;
-		return findInstance.categorySearchResults.get()[mainCategory];
+		return findInstance.state.get('categorySearchResults')[mainCategory];
 	},
 
 	categoryNameMarked() {
 		Session.get('locale'); // Reactive dependency
 		const search =
-			Template.instance().findInstance.categorySearch.get();
+			Template.instance().findInstance.state.get('categorySearch');
 
 		return StringTools.markedName(search, mf('category.' + this));
 	},

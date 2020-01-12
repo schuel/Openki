@@ -53,6 +53,15 @@
 					{{#if fromAddress}}
 						<a href="mailto:{{fromAddress}}">{{fromAddress}}</a>
 					{{/if}}
+			{{#if courseLink}}
+					<a href="{{courseLink}}">
+						{{mf
+							"notification.privateMessage.mail.fromCourse"
+							'Message sent from course "{COURSE}"'
+							COURSE=courseName LOCALE=locale
+						}}
+					</a>
+			{{/if}}
 				</p>
 			</td>
 		</tr>

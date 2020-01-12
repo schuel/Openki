@@ -1,9 +1,13 @@
-export default notificationPrivateMessage = {};
-import Users from '/imports/api/users/users.js';
+import { Match } from 'meteor/check';
+import { Router } from 'meteor/iron:router';
 
+import Users from '/imports/api/users/users.js';
 import Log from '/imports/api/log/log.js';
+
 import StringTools from '/imports/utils/string-tools.js';
 import HtmlTools from '/imports/utils/html-tools.js';
+
+export default notificationPrivateMessage = {};
 
 /** Record the intent to send a private message
   *
@@ -12,13 +16,20 @@ import HtmlTools from '/imports/utils/html-tools.js';
   * @param  {String} message - the message to transmit
   * @param    {Bool} revealSenderAddress - include email-address of sender in message
   * @param    {Bool} sendCopyToSender - send a copy of the message to the author
+  * @param    {Bool} context - dictionary with context ID (course, venue, &c.)
   */
-notificationPrivateMessage.record = function(senderId, recipientId, message, revealSenderAddress, sendCopyToSender) {
+notificationPrivateMessage.record = function(senderId, recipientId, message, revealSenderAddress, sendCopyToSender, context) {
 	check(senderId, String);
 	check(recipientId, String);
 	check(message, String);
 	check(revealSenderAddress, Boolean);
 	check(sendCopyToSender, Boolean);
+
+	const optionalId = Match.Optional(String);
+	check(context,
+		{ course: optionalId
+		}
+	);
 
 	const recipients = [recipientId];
 	if (sendCopyToSender) {
@@ -33,6 +44,10 @@ notificationPrivateMessage.record = function(senderId, recipientId, message, rev
 		}
 	}
 
+	const contextRel = Object.values(context);
+
+	const rel = [senderId, recipientId, ...contextRel];
+
 	var body =
 		{ message: message
 		, sender: senderId
@@ -40,9 +55,10 @@ notificationPrivateMessage.record = function(senderId, recipientId, message, rev
 		, targetRecipient: recipientId
 		, revealSenderAddress: revealSenderAddress
 		, model: 'PrivateMessage'
+		, context
 		};
 
-	Log.record('Notification.Send', [senderId, recipientId], body);
+	Log.record('Notification.Send', rel, body);
 };
 
 
@@ -81,6 +97,16 @@ notificationPrivateMessage.Model = function(entry) {
 				} else {
 					throw new Meteor.Error(400, "no verified email address");
 				}
+			}
+
+			const courseContextId = body.context.course;
+			if (courseContextId) {
+				const course = Courses.findOne(courseContextId);
+				if (!course) {
+					throw new Meteor.Error(404, "course not found");			
+				}
+				vars.courseName = course.name;
+				vars.courseLink = Router.url('showCourse', course);
 			}
 
 			return vars;

@@ -66,6 +66,16 @@
 				<span class="glyphicon glyphicon-bullhorn fa-fw" aria-hidden="true"></span>
 			</button>
 		{{/if}}
+		{{#if showContactParticipant}}
+			<div class="course-participant-contact">
+				<button class="btn-link js-show-contact-modal" type="button">
+					<i class="fa fa-envelope"></i>
+				</button>
+			</div>
+			{{#if state 'showContactModal'}}
+				{{> contactParticipantModal}}
+			{{/if}}
+		{{/if}}
 		{{#if showMemberComment}}
 			<div class="course-member-comment">
 				<div class="course-member-comment-arrow"></div>
@@ -110,10 +120,31 @@
 			</li>
 			<li class="dialog-dropdown-btn">
 				<button type="button" class="btn btn-remove js-remove-team">
-					<span class="fa fa-remove"></span>
+					<i class="fa fa-remove" aria-hidden="true"></i>
 					{{mf 'course.group.remove' 'Remove'}}
 				</button>
 			</li>
 		</ul>
 	</span>
+</template>
+
+<template name="contactParticipantModal">
+	<div class="modal contact-participant" tabindex="-1" role="dialog" id="contactParticipant">
+		<div class="modal-dialog modal-sm" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">
+						<i class="fa fa-fw fa-paper-plane" aria-hidden="true"></i>
+						{{#mf KEY='courseParticipantModal.writeMessageTo' USER=(username member.user)}}
+							Write a message to {USER}
+						{{/mf}}
+						<span class="close" data-dismiss="modal">&times;</span>
+					</h4>
+				</div>
+				<div class="modal-body">
+					{{> sendMessage recipientId=member.user courseId=course._id}}
+				</div>
+			</div>
+		</div>
+	</div>
 </template>

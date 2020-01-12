@@ -1,9 +1,11 @@
 <template name="verifyEmail">
 	{{#if sending}}
-		{{mf 'profile.sendingVerificationMail' "We're sending a verification mail to your address, it should arrive shortly. Please click the link in that message."}}
+		<div class="alert alert-success" role="alert">
+			<strong>{{mf 'profile.verifyEmail.mailOnItsWay' "Verification mail on its way!"}}</strong><br>
+			{{mf 'profile.sendingVerificationMail' "We're sending a verification mail to your address, it should arrive shortly. Please click the link in that message."}}
+		</div>
 	{{else}}
-		<button type="button" class="btn btn-success js-verify-mail-btn">
-			<span class="fa fa-check-circle-o fa-lg fa-fw" aria-hidden="true"></span>
+		<button type="button" class="btn btn-link js-verify-mail-btn">
 			{{mf 'profile.verifymail' 'Verify my E-Mail'}}
 		</button>
 	{{/if}}

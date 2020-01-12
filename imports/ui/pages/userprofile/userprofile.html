@@ -14,7 +14,7 @@
 				</a>
 			{{else}}
 				{{#if acceptsMessages}}
-				{{>emailBox}}
+					{{> sendMessage recipientId=user._id}}
 				{{/if}}
 			{{/if}}
 			{{#if showSettings}}
@@ -79,63 +79,5 @@
 			{{/if}}
 		</div>
 		{{> usersCourselist profileData=this ownProfile=false}}
-	</div>
-</template>
-
-<template name="emailBox">
-	<div class="details-form">
-		<form class="sendMail">
-			<div class="form-group">
-				<label>{{mf 'profile.mail.content' 'Your message:'}}</label>
-				<textarea class="form-control"
-					id="emailmessage"
-					placeholder="{{mf 'profile.mail.placeholder' 'Hi {USER}! …' USER=this.user.username}}"
-					rows="3"></textarea>
-			</div>
-		{{#if hasEmail}}
-			{{#if hasVerifiedEmail}}
-				<div class="form-group">
-					<div class="btn-group" data-toggle="buttons">
-						<label class="btn btn-default">
-							<input class="js-receive-copy"
-								id="receiveCopy"
-								type="checkbox"/>
-							{{mf 'profile.mail.copy' 'Send me a copy of this message'}}
-							<span class="checkmark glyphicon glyphicon-ok" aria-hidden="true" style="display:none"></span>
-						</label>
-						<label class="btn btn-default">
-							<input class="js-send-own-adress"
-								id="sendOwnAdress"
-								type="checkbox"/>
-							{{mf 'profile.mail.attachmail' 'Attach my e-mail address'}}
-							<span class="checkmark glyphicon glyphicon-ok" aria-hidden="true" style="display:none"></span>
-						</label>
-					</div>
-				</div>
-			{{else}}
-				<div class="form-group">
-                    <p class="help-block">
-                        <i class="fa fa-info fa-fw" aria-hidden="true"></i>
-                        {{#mf KEY='userprofile.infoForUnverifiedMail'}}
-                            In order to receive a copy to your E-Mail address or
-                            attach it to the message, you need to verify your address.
-                        {{/mf}}
-                    </p>
-                    {{> verifyEmail}}
-				</div>
-			{{/if}}
-		{{/if}}
-			<div class="form-actions">
-				<button type="submit" class="btn btn-save" {{disabledIfBusy}}>
-					{{#if busy 'sending'}}
-						<span class="fa fa-circle-o-notch fa-spin fa-fw" aria-hidden="true"></span>
-						{{mf 'userprofile.sendmail-btn.busy' 'Sending E-Mail...'}}
-					{{else}}
-						<span class="fa fa-send fa-fw" aria-hidden="true"></span>
-						{{mf 'userprofile.sendmail-btn' 'Send E-Mail'}}
-					{{/if}}
-				</button>
-			</div>
-		</form>
 	</div>
 </template>

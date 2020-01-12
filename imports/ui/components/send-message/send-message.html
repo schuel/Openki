@@ -1,0 +1,55 @@
+<template name="sendMessage">
+		<form class="js-send-message">
+			<div class="form-group">
+				<textarea
+					class="form-control js-email-message"
+					rows="4"
+					placeholder="{{mf 'profile.mail.placeholder' 'Hi {USER}! I wanted to tell you...' USER=(username recipientId)}}"
+					value="{{state 'message'}}"
+					></textarea>
+			</div>
+			{{#if hasEmail}}
+				{{#if hasVerifiedEmail}}
+					<div class="checkbox">
+						<label>
+							<input checked="{{state 'sendCopy'}}" name="sendCopy" type="checkbox">
+							{{mf 'profile.mail.copy' 'Send me a copy of this message'}}
+						</label>
+					</div>
+					<div class="checkbox">
+						<label>
+							<input checked="{{state 'revealAddress'}}" name="revealAddress"	type="checkbox">
+							{{mf 'profile.mail.attachmail' 'Attach my e-mail address'}}
+						</label>
+					</div>
+				{{else}}
+					<div class="panel panel-warning">
+						<div class="panel-heading">
+							<i class="fa fa-check-circle-o fa-lg fa-fw" aria-hidden="true"></i>
+							{{mf 'sendMessage.plsVerifyEmail' 'Please verify your E-Mail'}}
+						</div>
+						<div class="panel-body">
+							<p>
+								{{#mf KEY='userprofile.infoForUnverifiedMail'}}
+									In order to receive a copy to your E-Mail address or
+									attach it to the message, you need to verify your address.
+								{{/mf}}
+							</p>
+							{{> verifyEmail}}
+						</div>
+					</div>
+				{{/if}}
+			{{/if}}
+			<div class="form-actions">
+				<button type="submit" class="btn btn-save" {{disabledIfBusy}}>
+					{{#if busy 'sending'}}
+						<i class="fa fa-circle-o-notch fa-spin fa-fw" aria-hidden="true"></i>
+						{{mf 'userprofile.sendmail-btn.busy' 'Sending E-Mail...'}}
+					{{else}}
+						<i class="fa fa-send fa-fw" aria-hidden="true"></i>
+						{{mf 'userprofile.sendmail-btn' 'Send E-Mail'}}
+					{{/if}}
+				</button>
+			</div>
+		</form>
+</template>

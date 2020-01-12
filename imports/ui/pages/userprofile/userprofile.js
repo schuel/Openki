@@ -1,11 +1,9 @@
 import { Meteor } from 'meteor/meteor';
-import { ReactiveVar } from 'meteor/reactive-var';
 import { Template } from 'meteor/templating';
 
 import Roles from '/imports/api/roles/roles.js';
 
 import ShowServerError from '/imports/ui/lib/show-server-error.js';
-import PleaseLogin from '/imports/ui/lib/please-login.js';
 import { AddMessage } from '/imports/api/messages/methods.js';
 import { HasRoleUser } from '/imports/utils/course-role-utils.js';
 
@@ -111,93 +109,4 @@ Template.userprofile.events({
 			}
 		});
 	},
-});
-
-Template.emailBox.onCreated(function() {
-	this.verificationMailSent = new ReactiveVar(false);
-	this.busy(false);
-});
-
-Template.emailBox.onRendered(function emailBoxOnRendered() {
-	this.$('#emailmessage').select();
-});
-
-Template.emailBox.helpers({
-	hasEmail: function() {
-		var user = Meteor.user();
-		if (!user) return false;
-
-		var emails = user.emails;
-		return emails && emails[0];
-	},
-
-	hasVerifiedEmail: function() {
-		return Meteor.user().emails[0].verified;
-	},
-
-	verificationMailSent: function() {
-		return Template.instance().verificationMailSent.get();
-	}
-});
-
-Template.emailBox.events({
-	'click .js-verify-mail': function(e, instance) {
-		instance.verificationMailSent.set(true);
-		Meteor.call('sendVerificationEmail', function(err) {
-			if (err) {
-				instance.verificationMailSent.set(false);
-				ShowServerError('Failed to send verification mail', err);
-			} else {
-				AddMessage(mf('profile.sentVerificationMail'), 'success');
-			}
-		});
-	},
-
-	'change .js-send-own-adress': function (event, instance) {
-		instance.$('.js-send-own-adress + .checkmark').toggle();
-	},
-
-	'change .js-receive-copy': function (event, instance) {
-		instance.$('.js-receive-copy + .checkmark').toggle();
-	},
-
-	'submit form.sendMail': function (event, template) {
-		event.preventDefault();
-		if (PleaseLogin()) return;
-
-		var rec_user_id = this.user._id;
-		var rec_user = Meteor.users.findOne({_id:rec_user_id});
-		if(rec_user){
-			if(rec_user.username){
-				rec_user = rec_user.username;
-			}
-		}
-
-		var message = template.$('#emailmessage').val();
-		var revealAddress = template.$('#sendOwnAdress').is(':checked');
-		var receiveCopy = template.$('#receiveCopy').is(':checked');
-
-		if (message.length < '2') {
-			alert(mf('profile.mail.longertext', 'longer text please'));
-			return;
-		}
-
-		template.busy('sending');
-		Meteor.call(
-			'sendEmail',
-			this.user._id,
-			message,
-			revealAddress,
-			receiveCopy,
-			function(error, result) {
-				template.busy(false);
-				if (error) {
-					AddMessage(error, 'danger');
-				} else {
-					AddMessage(mf('profile.mail.sent', 'Your message was sent'), 'success');
-					template.$('#emailmessage').val('');
-				}
-			}
-		);
-	}
 });

@@ -1,5 +1,4 @@
 .course-members {
-	font-size: medium;
 	margin-top: $course-details-seperator-height;
 }
 
@@ -22,6 +21,10 @@
 
 .course-member + .course-member {
 	margin-top: $course-details-seperator-height;
+}
+
+.course-member > .profilelink {
+	font-size: medium;
 }
 
 .course-member-roles {
@@ -117,4 +120,9 @@ $course-member-comment-border-color: darken($blue-lighter, 20%);
 
 .course-member-comment .editable {
 	@include td-padding(left, 0);
+}
+
+.course-participant-contact {
+	@include td-float(right);
+	font-size: medium;
 }
